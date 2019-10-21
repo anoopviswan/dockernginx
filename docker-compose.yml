@@ -1,0 +1,27 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    restart: always
+    links:
+      - fluentd
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: nginx.access
+
+  fluentd:
+    build: ./fluentd
+    restart: always
+    links:
+      - "mongodb"
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+
+  mongodb:
+    image: mongo
+    restart: always
